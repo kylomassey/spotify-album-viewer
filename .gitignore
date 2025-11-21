@@ -1,0 +1,16 @@
+# Node modules
+node_modules/
+
+# Electron build binaries
+dist/
+*.exe
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+.env
