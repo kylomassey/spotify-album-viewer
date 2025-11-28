@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Spotify Album Viewer</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <title>Spotify Albums</title>
+  <style>
+    .album {
+      padding: 8px;
+      margin: 5px 0;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Latest Releases</h1>
 
-  <body>
-    <h1>Spotify Album Viewer</h1>
-    <div id="albums"></div>
+  <div id="albums">Loading...</div>
 
-    <script src="renderer.js"></script>
-  </body>
+  <script src="renderer.js"></script>
+</body>
 </html>
