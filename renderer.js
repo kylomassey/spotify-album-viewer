@@ -1,52 +1,116 @@
-console.log("Renderer loaded");
+console.log("RENDERER LOADED!");
 
-window.addEventListener("DOMContentLoaded", async () => {
-  const container = document.getElementById("albums");
+window.addEventListener("DOMContentLoaded", () => {
+  const genreSlider = document.getElementById("genreSlider");
+  const albumContainer = document.getElementById("albumContainer");
+  const leftArrow = document.getElementById("arrowL");
+  const rightArrow = document.getElementById("arrowR");
+  let num = 0;
 
-  // call your backend through preload
-  const albums = await window.spotify.getNewReleases(30);
+  async function loadGenres() {
+    const genres = await window.spotify.getGenres(); // returns keys from genre_map.json
 
-  // debug
-  console.log("Albums received:", albums);
-
-  // if nothing came back
-  if (!albums || albums.length === 0) {
-    container.innerHTML = "<p>No albums found</p>";
-    return;
+    genres.forEach((g) => {
+      const opt = document.createElement("div");
+      opt.value = g;
+      opt.className = "genre-div";
+      opt.innerHTML =`<button value = "${g}" class = "genre-button">${g}</button>`;    // "hip-hop"
+      genreSlider.appendChild(opt);
+    });
   }
 
-  // Add albums to the page
-  container.innerHTML = "";
+  loadGenres();
+  renderAlbums();
 
-  albums.forEach(album => {
-    const div = document.createElement("div");
-    div.classList.add("album");
-    div.style.cursor = "pointer";
+  async function renderAlbums(albums = null) {
+    let first = false;
+    if(albums == null){
+      first = true
+      albums = await window.spotify.startReleases();
+    }
+    albumContainer.innerHTML = "";
+    console.log(albums);
 
-    // Album cover
-    const img = document.createElement("img");
-    img.src = album.images[0]?.url;   // largest image returned by Spotify
-    img.alt = album.name;
+    if (albums.length === 0) {
+      albumContainer.innerHTML = "<p>No albums found.</p>";
+      return;
+    }
 
-    // Album name
-    const title = document.createElement("h3");
-    title.textContent = album.name;
+    if(first){
+      albums.value.forEach(album => {
+        const card = document.createElement("div");
+        card.className = "album-card";
 
-    // Artist name(s)
-    const artist = document.createElement("p");
-    artist.textContent = album.artists.map(a => a.name).join(", ");
+        card.innerHTML = `
+          <img src="${album.image}" class="album-img" />
+          <div class="album-info">
+            <h3>${album.title}</h3>
+            <p>${album.artist}</p>
+          </div>
+        `;
 
-    // CLICK HANDLER — opens Spotify app/browser
-    div.addEventListener("click", () => {
-      const spotifyUrl = album.external_urls.spotify;
-      window.spotify.openAlbum(spotifyUrl);
-    });
+        // Click behavior → open Spotify album
+        /*card.addEventListener("click", () => {
+          const url = album.external_urls?.spotify;
+          if (url) window.open(url, "_blank");
+        });*/
 
-    // Add elements to the album card
-    div.appendChild(img);
-    div.appendChild(title);
-    div.appendChild(artist);
+        albumContainer.appendChild(card);
+      });
+    first = false;
+    }else{
+      albums.forEach(album => {
+        const card = document.createElement("div");
+        card.className = "album-card";
 
-    container.appendChild(div);
+        card.innerHTML = `
+          <img src="${album.image}" class="album-img" />
+          <div class="album-info">
+            <h3>${album.title}</h3>
+            <p>${album.artist}</p>
+          </div>
+        `;
+
+        // Click behavior → open Spotify album
+        /*card.addEventListener("click", () => {
+          const url = album.external_urls?.spotify;
+          if (url) window.open(url, "_blank");
+        });*/
+
+        albumContainer.appendChild(card);
+      });
+    }
+    window.spotify.continueReleases()
+  }
+
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("genre-button")) {
+        console.log(e.target.value);
+        albumContainer.innerHTML = "<p>Loading…</p>";
+    }
+    else return;
   });
+
+  rightArrow.addEventListener("click", async () => {
+    num += 1;
+    albums = await window.spotify.getFifty(num);
+    if (albums != null){
+      albumContainer.innerHTML = "";
+      renderAlbums(albums);
+    }else{
+      num -=1
+    }
+  });
+
+  leftArrow.addEventListener("click", async () => {
+    num -= 1;
+    albums = await window.spotify.getFifty(num);
+    if (albums != null){
+      albumContainer.innerHTML = "";
+      renderAlbums(albums);
+    }else{
+      num += 1
+    }
+  });
+
 });

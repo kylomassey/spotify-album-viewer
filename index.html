@@ -1,15 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Spotify Albums</title>
+  <title>Spotify Genre Releases</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <h1>Latest Releases</h1>
+  <header>
+    <h1>Spotify Genre Releases</h1>
+  </header>
 
-  <div id="albums">Loading...</div>
+  <main>
+    <section id="controls">
+      <div id="genreSlider" class="scrollmenu"></div>
+      
+    </section>
+    
+    <!-- Album Cards Render Here -->
+    <section id="albumContainer"></section>
 
+    <section id="pagingArrows">
+      <i id="arrowR" class="arrow right"></i>
+      <i id="arrowL" class="arrow left"></i>
+    </section>
+  </main>
+
+  <!-- Renderer logic -->
   <script src="renderer.js"></script>
 </body>
 </html>
